@@ -1,0 +1,23 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+autopep8 = "*"
+flake8 = "*"
+ipython = "*"
+
+[packages]
+flask = "*"
+celery = "*"
+redis = "*"
+requests = "*"
+flask-cors = "*"
+python-dotenv = "*"
+webargs = "*"
+Werkzeug = "*"
+jsondiff = "*"
+
+[requires]
+python_version = "3.9"

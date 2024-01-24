@@ -1,2 +1,2 @@
 # python-apps
-A collection of Python applications 
+A collection of Python applications
