@@ -2,3 +2,5 @@
 log
 database.db
 
+uwsgi.ini
+*.sock
