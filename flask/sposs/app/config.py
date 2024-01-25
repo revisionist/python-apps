@@ -45,6 +45,8 @@ class BaseConfig(object):
 
     LOG_INFO_FILE = environ.get('SPOSS_LOG') or path.join(basedir, 'log', 'info.log')
     LOG_CELERY_FILE = environ.get('SPOSS_CELERY_LOG') or path.join(basedir, 'log', 'celery.log')
+
+    REST_BASE_URL_OBJECTSTORE_EXAMPLE = environ.get('REST_BASE_URL_OBJECTSTORE') or 'http://LOCALHOST/svc/v1/objectstore'
     
     LOGGING = {
         'version': 1,
@@ -106,7 +108,7 @@ class BaseConfig(object):
         'backupCount': 5
     }
 
-    SQLITE_DATABASE_FILE = environ.get('SQLITE_DATABASE_FILE') or '/data/awag/db/awag_sqlite.db'
+    SQLITE_DATABASE_FILE = environ.get('SQLITE_DATABASE_FILE') or None
 
 
 class Development(BaseConfig):
