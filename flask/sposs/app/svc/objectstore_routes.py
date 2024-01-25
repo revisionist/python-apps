@@ -886,6 +886,9 @@ def get_mappings():
 
         rows = cursor.fetchall()
 
+        if not rows:
+            return resp.generate_response_with_data("No mappings found", 404)
+
         response_data = []
 
         for row in rows:
@@ -899,7 +902,7 @@ def get_mappings():
 
         response_json = {
                 'status': 'OK',
-                'client_id': row["client_id"],
+                'client_id': CLIENT_ID,
                 'data': response_data
         }
 
