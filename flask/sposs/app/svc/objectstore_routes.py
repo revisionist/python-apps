@@ -231,6 +231,11 @@ def object_retrieve(namespace_id, object_id, object_prop=None):
                 response_text = f"Object not found: {namespace_id}/{object_id}"
             return resp.generate_response_with_data(response_text, 404)
 
+        cursor.execute(
+            f'SELECT client_id, namespace_id, object_id, revision_id, timestamp FROM {table_object_store} WHERE client_id=? AND namespace_id=? AND object_id=? ORDER BY timestamp DESC',
+            (CLIENT_ID, namespace_id, object_id,)
+        )
+
         response_json = {
                 'status': 'OK',
                 'client_id': row["client_id"],
@@ -241,6 +246,12 @@ def object_retrieve(namespace_id, object_id, object_prop=None):
                 'object_timestamp': row["timestamp"],
                 'object': json.loads(row["object_json"])
             }
+
+        if object_prop and object_prop == "revisions":
+            rows_revisions = cursor.fetchall()
+            if rows_revisions:
+                revisions = [{'revision_id': row_revision['revision_id'], 'timestamp': row_revision['timestamp']} for row_revision in rows_revisions]
+                response_json["revisions"] = revisions
 
         if object_prop:
             if object_prop in response_json:
@@ -471,7 +482,7 @@ def object_delete(namespace_id, object_id):
         conn_close(conn)
 
 
-@objectstore_routes.route('/<namespace_id>/<object_id>', methods=['GET'])
+@objectstore_routes.route('/<namespace_id>/<object_id>/revisions', methods=['GET'])
 @objectstore_routes.route('/query/<namespace_id>/<object_id>', methods=['GET'])
 @require_api_auth
 def object_query(namespace_id, object_id):
