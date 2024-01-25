@@ -482,52 +482,6 @@ def object_delete(namespace_id, object_id):
         conn_close(conn)
 
 
-@objectstore_routes.route('/<namespace_id>/<object_id>/revisions', methods=['GET'])
-@objectstore_routes.route('/query/<namespace_id>/<object_id>', methods=['GET'])
-@require_api_auth
-def object_query(namespace_id, object_id):
-
-    CLIENT_ID, resp, conn = init_route(request)
-
-    try:
-
-        logger.debug(f"CLIENT_ID: {CLIENT_ID}, namespace_id: {namespace_id}, object_id: {object_id}")
-
-        conn, table_object_store, table_object_store_tags = init_db(CLIENT_ID, namespace_id, resp)
-
-        cursor = conn.cursor()
-
-        cursor.execute(
-            f'SELECT client_id, namespace_id, object_id, revision_id, timestamp FROM {table_object_store} WHERE client_id=? AND namespace_id=? AND object_id=? ORDER BY timestamp DESC',
-            (CLIENT_ID, namespace_id, object_id,)
-        )
-
-        rows = cursor.fetchall()
-
-        if not rows:
-            return resp.generate_response_with_data(f"Object not found: {namespace_id}/{object_id}", 404)
-
-        response_data = [{'revision_id': row['revision_id'], 'timestamp': row['timestamp']} for row in rows]
-
-        response_json = {
-                'status': 'OK',
-                'client_id': CLIENT_ID,
-                'namespace_id': namespace_id,
-                'object_id': object_id,
-                'revisions': response_data
-            }
-
-        return resp.generate_response_with_data(response_json, 200)
-
-    except Exception as e:
-
-        return resp.generate_response_with_exception(e)
-
-    finally:
-
-        conn_close(conn)
-
-
 @objectstore_routes.route('/tags/<namespace_id>/<object_id>', methods=['PATCH'])
 @objectstore_routes.route('/tags/<namespace_id>/<object_id>', methods=['PUT'])
 @objectstore_routes.route('/tags/add/<namespace_id>/<object_id>', methods=['POST'])
