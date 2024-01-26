@@ -23,7 +23,8 @@ from flask import current_app, make_response, g
 from werkzeug.local import LocalProxy
 
 from domestique.logging import log_exception
-from domestique.flask.response import ResponseWrapper
+from domestique.flask.session import Session
+from domestique.validation import Validator, NoiseLevel
 
 
 logger = LocalProxy(lambda: current_app.logger)
@@ -32,22 +33,23 @@ logger = LocalProxy(lambda: current_app.logger)
 VALID_NAME_REGEX = re.compile(r'^[a-zA-Z0-9:+\-_/~#]*$')
 
 
-def init_route(request):
+def init_route(request, calling_method_text=None):
 
     client_id = g.client_id
     resp = None
     conn = None
+    
+    # The value of validator_noise_level determines the log-level of emitted messages
+    # - so passing DEBUG is quiter than INFO, because it will only emit debug-level
+    # messages (unless it finds an error)
+    #validator_noise_level=NoiseLevel.INFO
+    validator_noise_level=NoiseLevel.DEBUG
+    #validator_noise_level=NoiseLevel.SILENT
 
-    if not request:
-        raise ValueError("Must pass a request to init_route!")
+    session = Session(g.client_id, request, calling_method_text, validator_noise_level=validator_noise_level)
+    session.log_info()
 
-    logger.info(f"Route: {request.method} {request.path} from {request.remote_addr} as {client_id}")
-    try:
-        resp = ResponseWrapper(request, client_id)
-    except Exception as e:
-        log_exception(client_id, e)
-
-    return client_id, resp, conn
+    return client_id, session
 
 
 def is_valid_name_string(val):
