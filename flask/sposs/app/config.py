@@ -92,8 +92,8 @@ class BaseConfig(object):
                 'propagate': False
             },
             'domestique': {
+                'level': 'DEBUG',
                 'handlers': ['log_info_file'],
-                'level': 'INFO',
                 'propagate': False
             },
         }
