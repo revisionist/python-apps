@@ -12,12 +12,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import sys
-import types
 import re
-import sqlite3
 import json
-import os
 
 from flask import current_app, make_response, g
 from werkzeug.local import LocalProxy
@@ -37,7 +33,6 @@ def init_route(request, calling_method_text=None):
 
     client_id = g.client_id
     resp = None
-    conn = None
     
     # The value of validator_noise_level determines the log-level of emitted messages
     # - so passing DEBUG is quiter than INFO, because it will only emit debug-level

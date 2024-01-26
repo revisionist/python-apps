@@ -48,7 +48,6 @@ from flask import Blueprint, current_app, g, jsonify, request
 
 from werkzeug.local import LocalProxy
 from datetime import datetime, timedelta
-
 from jsondiff import diff
 
 from authentication import require_api_auth
