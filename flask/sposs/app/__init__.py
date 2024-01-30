@@ -49,7 +49,11 @@ def create_app():
 
     app = Flask(app_config[APPLICATION_ENV].APP_NAME)
 
-    app.config["JSON_SORT_KEYS"] = False
+    if hasattr(app, 'json') and hasattr(app.json, 'sort_keys'):
+        app.json.sort_keys = False
+    else:
+        app.config["JSON_SORT_KEYS"] = False
+
     app.config.from_object(app_config[APPLICATION_ENV])
     #app.logger.addHandler(logging.handlers.RotatingFileHandler(app_config[APPLICATION_ENV].LOG_INFO_FILE, maxBytes=16777216, backupCount=5))
 
