@@ -764,12 +764,12 @@ def get_mappings(CLIENT_ID, session, conn, table_info):
 
     query_select = "SELECT client_id, namespace_id, identifier_name, timestamp"
     query_from = f"FROM {TABLE_OBJECT_STORE_MAPPING}"
-    query_where = ""
-    query_params = []
+    query_where = f"WHERE client_id=?"
+    query_params = [CLIENT_ID]
     query_order = "ORDER BY client_id, namespace_id ASC"
 
     if namespace_id:
-        query_where = "WHERE namespace_id=?"
+        query_where += " AND namespace_id=?"
         query_params.append(namespace_id)
 
     query_combined = concat_sql([query_select, query_from, query_where, query_order])
